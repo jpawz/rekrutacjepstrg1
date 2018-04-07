@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import org.h2.util.New;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +58,17 @@ public class TransitControllerTest {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		assertThat(response.getContentAsString())
 				.isEqualTo(json.write(transit).getJson());
+		checkJson("@.source_address", "ul. Zakręt 8, Poznań");
+		checkJson("@.destination_address", "Złota 44, Warszawa");
+		checkJson("@.date", "2018-03-15");
+		assertThat(json.write(transit)).hasJsonPathNumberValue("@.price");
+		assertThat(json.write(transit)).extractingJsonPathNumberValue("@.price")
+				.isEqualTo(new Double(450));
 	}
 
+	private void checkJson(String path, String value) throws Exception {
+		assertThat(json.write(transit)).hasJsonPathStringValue(path);
+		assertThat(json.write(transit)).extractingJsonPathStringValue(path)
+				.isEqualTo(value);
+	}
 }
