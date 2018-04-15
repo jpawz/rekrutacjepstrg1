@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import org.h2.util.New;
+import java.time.LocalDate;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +41,14 @@ public class TransitControllerTest {
 	public void setup() {
 		JacksonTester.initFields(this, new ObjectMapper());
 		transit = new Transit("ul. Zakręt 8, Poznań", "Złota 44, Warszawa", 450,
-				"2018-03-15");
+				LocalDate.of(2018, 3, 15));
 	}
 
 	@Test
 	public void addTransit() throws Exception {
 		// given
-		given(transitService.createTransit()).willReturn(transit);
+		given(transitService.createTransit("ul. Zakręt 8, Poznań", "Złota 44, Warszawa",
+				450, LocalDate.of(2018, 3, 15))).willReturn(transit);
 
 		// when
 		MockHttpServletResponse response = mockMvc
