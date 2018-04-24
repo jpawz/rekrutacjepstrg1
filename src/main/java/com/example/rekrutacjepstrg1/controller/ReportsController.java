@@ -1,6 +1,7 @@
 package com.example.rekrutacjepstrg1.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.rekrutacjepstrg1.domain.DailyTransit;
 import com.example.rekrutacjepstrg1.service.ReportsService;
 
 @RestController
@@ -32,5 +34,13 @@ public class ReportsController {
 
 		return new ResponseEntity<>(reportsService.getDailyReport(
 				LocalDate.parse(startDate), LocalDate.parse(endDate)), HttpStatus.OK);
+	}
+
+	@GetMapping("monthly")
+	public ResponseEntity<List<DailyTransit>> getMonthlyReport() {
+
+		return new ResponseEntity<>(reportsService.getMonthlyReport(
+				LocalDate.now().withDayOfMonth(1), LocalDate.now()), HttpStatus.OK);
+
 	}
 }

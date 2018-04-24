@@ -12,7 +12,7 @@ public class TransitServiceImpl implements TransitService {
 	@Override
 	public Transit createTransit(String sourceAddress, String destinationAddress,
 			double price, LocalDate date) {
-		return null;
+		return new Transit(sourceAddress, destinationAddress, price, date);
 	}
 
 }

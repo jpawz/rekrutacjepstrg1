@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.rekrutacjepstrg1.domain.DailyTransit;
 import com.example.rekrutacjepstrg1.domain.Transit;
 import com.example.rekrutacjepstrg1.repository.TransitRepository;
 
@@ -37,6 +38,11 @@ public class ReportsServiceImpl implements ReportsService {
 		report.put("total_distance", totalDistance + DISTANCE_UNIT);
 		report.put("total_price", totalPrice + CURRENCY);
 		return report;
+	}
+
+	@Override
+	public List<DailyTransit> getMonthlyReport(LocalDate startDate, LocalDate endDate) {
+		return transitRepository.findDailyTransits(startDate, endDate);
 	}
 
 }

@@ -20,7 +20,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@Entity
+@Entity(name = "transit")
 public class Transit {
 	@Id
 	@GeneratedValue

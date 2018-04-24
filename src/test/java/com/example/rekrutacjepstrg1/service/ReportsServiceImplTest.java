@@ -22,19 +22,24 @@ public class ReportsServiceImplTest {
 	@Mock
 	private TransitRepository transitRepository;
 
-	private LocalDate startDate = LocalDate.of(2018, 3, 10);
-	private LocalDate endDate = LocalDate.of(2018, 3, 25);
+	private LocalDate now = LocalDate.now();
+	private LocalDate startDate = LocalDate.of(now.getYear(), now.getMonth(), 10);
+	private LocalDate endDate = LocalDate.of(now.getYear(), now.getMonth(), 25);
 	private Transit transit1, transit2;
 	private long distance1 = 789, distance2 = 654;
+	private String totalDistance = (distance1 + distance2) + "km";
 	private double price1 = 123, price2 = 321;
+	private String totalPrice = (price1 + price2) + "PLN";
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		reportsServiceImpl = new ReportsServiceImpl(transitRepository);
-		transit1 = new Transit("any", "any", price1, LocalDate.of(2018, 3, 11));
+		transit1 = new Transit("any", "any", price1,
+				LocalDate.of(now.getYear(), now.getMonth(), 11));
 		transit1.setDistance(distance1);
-		transit2 = new Transit("any", "any", price2, LocalDate.of(2018, 3, 19));
+		transit2 = new Transit("any", "any", price2,
+				LocalDate.of(now.getYear(), now.getMonth(), 19));
 		transit2.setDistance(distance2);
 	}
 
@@ -47,8 +52,8 @@ public class ReportsServiceImplTest {
 				endDate);
 
 		assertThat(dailyReport).containsOnlyKeys("total_distance", "total_price");
-		assertThat(dailyReport.get("total_distance"))
-				.isEqualTo(distance1 + distance2 + "km");
-		assertThat(dailyReport.get("total_price")).isEqualTo(price1 + price2 + "PLN");
+		assertThat(dailyReport.get("total_distance")).isEqualTo(totalDistance);
+		assertThat(dailyReport.get("total_price")).isEqualTo(totalPrice);
 	}
+
 }

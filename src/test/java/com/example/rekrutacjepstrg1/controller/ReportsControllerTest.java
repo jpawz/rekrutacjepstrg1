@@ -7,7 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -22,8 +25,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.rekrutacjepstrg1.domain.DailyTransit;
 import com.example.rekrutacjepstrg1.domain.Transit;
 import com.example.rekrutacjepstrg1.service.ReportsService;
+import com.example.rekrutacjepstrg1.utils.DayNumberSuffix;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
@@ -70,6 +75,28 @@ public class ReportsControllerTest {
 				.andExpect(jsonPath("$.total_distance").value(totalDistance))
 				.andExpect(jsonPath("$").value(hasKey("total_price")))
 				.andExpect(jsonPath("$.total_price").value(totalPrice));
+	}
+
+	@Test
+	public void checkMonthlyReport() throws Exception {
+		String date = LocalDate.of(2018, 3, 9)
+				.format(DateTimeFormatter.ofPattern("MMMM").withLocale(Locale.ENGLISH))
+				+ ", 9" + DayNumberSuffix.getDayNumberSuffix(9);
+		given(reportsService.getMonthlyReport(LocalDate.now().withDayOfMonth(1),
+				LocalDate.now())).willReturn(Arrays.asList(
+						new DailyTransit(LocalDate.of(2018, 3, 9), 123L, 98L, 120d),
+						new DailyTransit(LocalDate.of(2018, 3, 15), 111L, 55L, 77d)));
+
+		mockMvc.perform(get("/reports/monthly").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$[0]").value(hasKey("date")))
+				.andExpect(jsonPath("$[0].date").value(date))
+				.andExpect(jsonPath("$[0]").value(hasKey("total_distance")))
+				.andExpect(jsonPath("$[0].total_distance").value("123km"))
+				.andExpect(jsonPath("$[0]").value(hasKey("avg_distance")))
+				.andExpect(jsonPath("$[0].avg_distance").value("98km"))
+				.andExpect(jsonPath("$[0]").value(hasKey("avg_price")))
+				.andExpect(jsonPath("$[0].avg_price").value("120PLN"));
 	}
 
 }
